@@ -4,7 +4,7 @@
  */
 package interfaz.mobimedlinesistema.model;
 
-import interfaz.mobimedlinesistema.model.Usuarios;
+import interfaz.mobimedlinesistema.model.Usuario;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,38 +13,38 @@ import java.util.List;
  * @author Mike
  */
 public class AgendaUsuariosBase {
-    private static List<Usuarios> usuariosBase = new ArrayList<>();
+    private static List<Usuario> usuariosBase = new ArrayList<>();
     
     //Se agrego para hacer un puente que cuando se modifique algo se guarde directamente en esta clase de base 
-    public static void setUsuariosBase(List<Usuarios> nuevaLista) {
+    public static void setUsuariosBase(List<Usuario> nuevaLista) {
     usuariosBase = nuevaLista;
     }
     
-    // Bloque estático para inicializar los Usuarios base una sola vez
+    // Bloque estático para inicializar los Usuario base una sola vez
     static {
         // --- Usuario Base: Gerente ---
-        Usuarios usuario1 = new Usuarios("DOSJ01", "Jhon", "Dhoe", "Smith", "10sey0u");
-        usuario1.setPermisos(true); // Damos permiso de administrador
+        Usuario usuario1 = new Usuario("DOSJ01", "Jhon", "Dhoe", "Smith", "10sey0u");
+        usuario1.setPermiso(true); // Damos permiso de administrador
         // Se crea con la plantilla
         usuariosBase.add(usuario1);
         
         // --- Usuario Base: usuario ---
-        Usuarios usuario2 = new Usuarios("OIPM01", "Miguel Angel", "Pérez", "Smith", "c0mew1th");
+        Usuario usuario2 = new Usuario("OIPM01", "Miguel Angel", "Pérez", "Smith", "c0mew1th");
         // Se crea con la plantilla
         usuariosBase.add(usuario2);
         
         // --- Usuario Base: usuario ---
-        Usuarios usuario3 = new Usuarios("RAAA01", "Alejandro Rodolfo", "Ramirez", "Arzate", "1Oney");
+        Usuario usuario3 = new Usuario("RAAA01", "Alejandro Rodolfo", "Ramirez", "Arzate", "1Oney");
         // Se crea con la plantilla
         usuariosBase.add(usuario3);
         
         // --- Usuario Base: usuario ---
-        Usuarios usuario4 = new Usuarios("GAGV01", "Veronica", "Garcia", "Gonzalez", "n0th1ng");
+        Usuario usuario4 = new Usuario("GAGV01", "Veronica", "Garcia", "Gonzalez", "n0th1ng");
         // Se crea con la plantilla
         usuariosBase.add(usuario4);
     }
     
-    public static List<Usuarios> getUsuariosBase() {
+    public static List<Usuario> getUsuariosBase() {
         return usuariosBase;
     }
     

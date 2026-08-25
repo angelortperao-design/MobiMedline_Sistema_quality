@@ -7,7 +7,7 @@ package interfaz.mobimedlinesistema.model;
 import interfaz.mobimedlinesistema.model.CatalogoProductosBase;
 import interfaz.mobimedlinesistema.model.ODC;
 import interfaz.mobimedlinesistema.model.Producto;
-import interfaz.mobimedlinesistema.model.Usuarios;
+import interfaz.mobimedlinesistema.model.Usuario;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.collections.FXCollections;
@@ -25,7 +25,7 @@ public class ArchivoOdcBase {
     static {
         //aqui va las ODC base a mostrar en la expo
         List<Producto> productos = CatalogoProductosBase.getProductosBase();
-        List<Usuarios> directorioUsuarios = AgendaUsuariosBase.getUsuariosBase();
+        List<Usuario> directorioUsuarios = AgendaUsuariosBase.getUsuariosBase();
         //aquí se hicieron los cambios
         //  ODC 1 
         ODC odc1 = new ODC(directorioUsuarios.get(0), "2026-04-25", "Pendiente");

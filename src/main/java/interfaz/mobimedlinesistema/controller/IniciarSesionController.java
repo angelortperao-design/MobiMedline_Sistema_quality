@@ -3,7 +3,7 @@
 package interfaz.mobimedlinesistema.controller;
 
 import interfaz.mobimedlinesistema.model.AgendaUsuariosBase;
-import interfaz.mobimedlinesistema.model.Usuarios;
+import interfaz.mobimedlinesistema.model.Usuario;
 import interfaz.mobimedlinesistema.app.App;
 import java.io.IOException;
 import java.util.List;
@@ -13,7 +13,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Alert;
 
 public class IniciarSesionController {
-    public static Usuarios usuarioActual; //saber quién inició sesión
+    public static Usuario usuarioActual; //saber quién inició sesión
 
     @FXML
     private TextField tfnombreUs;
@@ -31,16 +31,16 @@ private void handleLogin() {
         return; 
     }
 
-    List<Usuarios> listaUsuarios = AgendaUsuariosBase.getUsuariosBase();
+    List<Usuario> listaUsuarios = AgendaUsuariosBase.getUsuariosBase();
     boolean loginExitoso = false;
     
-    for (Usuarios u : listaUsuarios) {
-        if (u.getUsuario().equals(user) && u.getContraseña().equals(pass)) {
+    for (Usuario u : listaUsuarios) {
+        if (u.getUsuario().equals(user) && u.getContrasenia().equals(pass)) {
             loginExitoso = true;
             usuarioActual = u; //usuario que inició sesión
             
             try {
-                if (u.getPermisos()) { // Es true (Gerente)
+                if (u.isPermiso()) { // Es true (Gerente)
                     System.out.println("Iniciando sesión como Gerente: " + u.getNombre());
                     App.setRoot("MenuGerente"); 
                 } else { // Es false (Empleado)

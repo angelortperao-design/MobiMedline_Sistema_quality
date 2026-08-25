@@ -1,7 +1,7 @@
 package interfaz.mobimedlinesistema.controller;
 
 import interfaz.mobimedlinesistema.model.AgendaUsuariosBase;
-import interfaz.mobimedlinesistema.model.Usuarios;
+import interfaz.mobimedlinesistema.model.Usuario;
 import java.io.IOException;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -82,8 +82,8 @@ public class RecapitulacionUsuarioController {
     @FXML
     private void AccionConfirmarGuardado(ActionEvent event) {
         
-        // Usamos los datos manuales para crear el objeto Usuarios
-        Usuarios nuevo = new Usuarios(usuG, nomG, patG, matG, passG);
+        // Usamos los datos manuales para crear el objeto Usuario
+        Usuario nuevo = new Usuario(usuG, nomG, patG, matG, passG);
     
         //Lo metemos a la lista donde están los de prueba
         AgendaUsuariosBase.getUsuariosBase().add(nuevo); 

@@ -63,7 +63,7 @@ public class NuevaODCController implements Initializable {
     private Popup suggestionPopup;
 
     private boolean esEmpleado() {
-        return !IniciarSesionController.usuarioActual.getPermisos();
+        return !IniciarSesionController.usuarioActual.isPermiso();
     }
 
     @FXML

@@ -8,7 +8,7 @@ import interfaz.mobimedlinesistema.model.ArchivoOdcBase;
 import interfaz.mobimedlinesistema.model.Insumo;
 import interfaz.mobimedlinesistema.model.ODC;
 import interfaz.mobimedlinesistema.model.Producto;
-import interfaz.mobimedlinesistema.model.Usuarios;
+import interfaz.mobimedlinesistema.model.Usuario;
 import java.net.URL;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -115,7 +115,7 @@ public class ConsultaOrdenCompraController implements Initializable {
 
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Detalles de Orden: " + seleccion.getIdODC());
-        // Acceso correcto al objeto Usuarios responsable
+        // Acceso correcto al objeto Usuario responsable
         alert.setHeaderText("Responsable: " + seleccion.getResponsable().getNombre() + 
                            " (" + seleccion.getResponsable().getUsuario() + ")");
         alert.setContentText(detalle.toString());
@@ -247,7 +247,7 @@ public class ConsultaOrdenCompraController implements Initializable {
 
         // Tu lógica existente para el responsable
         tlcResponsable.setCellValueFactory(cellData -> {
-            Usuarios resp = cellData.getValue().getResponsable();
+            Usuario resp = cellData.getValue().getResponsable();
             return new javafx.beans.property.SimpleStringProperty(resp != null ? resp.getUsuario() : "N/A");
         });
     }

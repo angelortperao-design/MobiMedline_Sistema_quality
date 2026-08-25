@@ -1,7 +1,7 @@
 package interfaz.mobimedlinesistema.controller;
 
 import interfaz.mobimedlinesistema.model.AgendaUsuariosBase;
-import interfaz.mobimedlinesistema.model.Usuarios;
+import interfaz.mobimedlinesistema.model.Usuario;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -46,23 +46,23 @@ public class ConsultarEmpleadoController implements Initializable {
     //TABLA Y COLUMNAS
 
     @FXML
-    private TableColumn<Usuarios, String> colNombre;
+    private TableColumn<Usuario, String> colNombre;
 
     @FXML
-    private TableColumn<Usuarios, String> colPassword;
+    private TableColumn<Usuario, String> colPassword;
 
     @FXML
-    private TableColumn<Usuarios, String> colUsuario;
+    private TableColumn<Usuario, String> colUsuario;
 
     @FXML
-    private TableView<Usuarios> tblEmpleados;
+    private TableView<Usuario> tblEmpleados;
     
     //LISTA DE EMPLEADOS QUE SE MUESTRAN EN LA TABLE: Usamos ObservableList para que se actualice con las acciones que hacemos
     
-    private ObservableList<Usuarios> listaEmpleados = FXCollections.observableArrayList();
+    private ObservableList<Usuario> listaEmpleados = FXCollections.observableArrayList();
     
     // Almacena qué usuario tiene permiso de mostrar contraseña
-    private Usuarios usuarioRevelado = null; 
+    private Usuario usuarioRevelado = null; 
 
    //BOTONES DE ACCIÓN
     
@@ -70,7 +70,7 @@ public class ConsultarEmpleadoController implements Initializable {
     void Editar(ActionEvent event) {
         
         //Objeto del tipo empleados, el cual será seleccionado para efectuar una acción sobre él
-        Usuarios seleccionado = tblEmpleados.getSelectionModel().getSelectedItem();
+        Usuario seleccionado = tblEmpleados.getSelectionModel().getSelectedItem();
 
         if (seleccionado == null) {
             System.out.println("Selecciona un registro primero");
@@ -112,7 +112,7 @@ public class ConsultarEmpleadoController implements Initializable {
     @FXML
     void Eliminar(ActionEvent event) {
         
-        Usuarios seleccionado = tblEmpleados.getSelectionModel().getSelectedItem();
+        Usuario seleccionado = tblEmpleados.getSelectionModel().getSelectedItem();
         
         if(seleccionado == null){
             Alert alerta = new Alert(Alert.AlertType.WARNING);
@@ -158,7 +158,7 @@ public class ConsultarEmpleadoController implements Initializable {
     void Guardar(ActionEvent event) {
         
         //Obtener la lista de usuarios que están actualmente en la tabla (ya editados)
-        List<Usuarios> listaEditada = new ArrayList<>(tblEmpleados.getItems());
+        List<Usuario> listaEditada = new ArrayList<>(tblEmpleados.getItems());
         
         //ESTE ACTUALIZARA LA LISTA UNA VEZ QUE SE HAGA LAS MODIFICACIONES PERTINENTESD
         AgendaUsuariosBase.setUsuariosBase(listaEditada);
@@ -186,7 +186,7 @@ public class ConsultarEmpleadoController implements Initializable {
     @FXML
     void verPasswordSeleccionado(ActionEvent event) {
     //Obtener quién está seleccionado en la tabla
-    Usuarios seleccionado = tblEmpleados.getSelectionModel().getSelectedItem();
+    Usuario seleccionado = tblEmpleados.getSelectionModel().getSelectedItem();
 
     if (seleccionado == null) {
         Alert alerta = new Alert(Alert.AlertType.WARNING);
@@ -267,14 +267,14 @@ public class ConsultarEmpleadoController implements Initializable {
         //Conectar columnas con datos
         colNombre.setCellValueFactory(new PropertyValueFactory<>("nombre"));
         colUsuario.setCellValueFactory(new PropertyValueFactory<>("usuario"));
-        colPassword.setCellValueFactory(new PropertyValueFactory<>("contraseña"));
+        colPassword.setCellValueFactory(new PropertyValueFactory<>("contrasenia"));
         
         //Columnas editables
         colNombre.setCellFactory(TextFieldTableCell.forTableColumn());
         colUsuario.setCellFactory(TextFieldTableCell.forTableColumn());
         //colPassword.setCellFactory(TextFieldTableCell.forTableColumn());
         
-        colPassword.setCellFactory(column -> new TextFieldTableCell<Usuarios, String>(new DefaultStringConverter()) {
+        colPassword.setCellFactory(column -> new TextFieldTableCell<Usuario, String>(new DefaultStringConverter()) {
     @Override
     public void updateItem(String item, boolean empty) {
         super.updateItem(item, empty);
@@ -288,7 +288,7 @@ public class ConsultarEmpleadoController implements Initializable {
                 setText(item); 
             } else {
                 // Obtenemos el usuario de la fila actual
-                Usuarios usuarioDeFila = getTableRow() != null ? getTableRow().getItem() : null;
+                Usuario usuarioDeFila = getTableRow() != null ? getTableRow().getItem() : null;
                 
                 // Si el gerente autorizó este usuario específico, mostramos la clave[cite: 3, 4]
                 if (usuarioDeFila != null && usuarioDeFila == usuarioRevelado) {
@@ -303,20 +303,20 @@ public class ConsultarEmpleadoController implements Initializable {
         
         //Guardar la info ingresada de la modificación
         colNombre.setOnEditCommit(event -> {
-            Usuarios emp = event.getRowValue();
+            Usuario emp = event.getRowValue();
             emp.setNombre(event.getNewValue());
             tblEmpleados.refresh();
         });
         
         colUsuario.setOnEditCommit(event -> {
-            Usuarios emp = event.getRowValue();
+            Usuario emp = event.getRowValue();
             emp.setUsuario(event.getNewValue());
             tblEmpleados.refresh();
         });
         
         colPassword.setOnEditCommit(event -> {
-            Usuarios emp = event.getRowValue();
-            emp.setContraseña(event.getNewValue());
+            Usuario emp = event.getRowValue();
+            emp.setContrasenia(event.getNewValue());
             tblEmpleados.refresh();
         });
 

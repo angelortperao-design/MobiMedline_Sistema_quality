@@ -10,7 +10,7 @@ import interfaz.mobimedlinesistema.exception.CamposIncompletosException;
 import interfaz.mobimedlinesistema.exception.ContrasenasNoCoincidenException;
 import interfaz.mobimedlinesistema.exception.NombreConNumerosException;
 import interfaz.mobimedlinesistema.exception.UsuarioDuplicadoException;
-import interfaz.mobimedlinesistema.model.Usuarios;
+import interfaz.mobimedlinesistema.model.Usuario;
 import interfaz.mobimedlinesistema.controller.RecapitulacionUsuarioController;
 import java.io.IOException;
 import java.net.URL;
@@ -205,8 +205,8 @@ public class AgregarUsuarioController implements Initializable {
      */
     private void validarUsuarioUnico(String usuarioAChecar) throws UsuarioDuplicadoException {
         // Recorremos la lista estática que tienes en AgendaUsuariosBase
-        for (Usuarios u : AgendaUsuariosBase.getUsuariosBase()) {
-            // Buscamos si el ID de usuario ya está tomado (asumiendo que tienes un getter getUsuario() en la clase Usuarios)
+        for (Usuario u : AgendaUsuariosBase.getUsuariosBase()) {
+            // Buscamos si el ID de usuario ya está tomado (asumiendo que tienes un getter getUsuario() en la clase Usuario)
             if (u.getUsuario().equalsIgnoreCase(usuarioAChecar)) {
                 throw new UsuarioDuplicadoException("El usuario '" + usuarioAChecar + "' ya se encuentra registrado.");
             }
@@ -223,7 +223,7 @@ public class AgregarUsuarioController implements Initializable {
     private int calcularSiguienteContador(String inicialesCuatroLetras) {
         int maxContador = 1;
         
-        for (Usuarios u : AgendaUsuariosBase.getUsuariosBase()) {
+        for (Usuario u : AgendaUsuariosBase.getUsuariosBase()) {
             String idExistente = u.getUsuario(); // Ejemplo: "DOSJ01"
             
             if (idExistente.length() >= 4 && idExistente.substring(0, 4).equalsIgnoreCase(inicialesCuatroLetras)) {

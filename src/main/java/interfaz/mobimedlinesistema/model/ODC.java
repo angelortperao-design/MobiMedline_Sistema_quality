@@ -5,7 +5,7 @@
 package interfaz.mobimedlinesistema.model;
 
 import interfaz.mobimedlinesistema.model.Producto;
-import interfaz.mobimedlinesistema.model.Usuarios;
+import interfaz.mobimedlinesistema.model.Usuario;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -22,7 +22,7 @@ public class ODC {
     private final String idODC;
     private final List<Producto> productos;
     private boolean tipoEspecial;
-    private Usuarios responsable;
+    private Usuario responsable;
     private final String fechaODC;
     private String estado;
     
@@ -38,7 +38,7 @@ public class ODC {
         this.estado = "";
     }
     
-    public ODC(Usuarios responsable, String fecha, String estado) {
+    public ODC(Usuario responsable, String fecha, String estado) {
         // Genera el ID con formato #####-ODC (ej. 00001-ODC)
         this.idODC = String.format("%05d-ODC", contadorSiguiente++);
         this.productos = new ArrayList<>();
@@ -186,7 +186,7 @@ public class ODC {
         return tipoEspecial; 
     }
 
-    public Usuarios getResponsable() {
+    public Usuario getResponsable() {
         return responsable;
     }
 
@@ -207,7 +207,7 @@ public class ODC {
         this.tipoEspecial = tipo;
     }
 
-    public void setResponsable(Usuarios responsable) {
+    public void setResponsable(Usuario responsable) {
         this.responsable = responsable;
     }
 }
