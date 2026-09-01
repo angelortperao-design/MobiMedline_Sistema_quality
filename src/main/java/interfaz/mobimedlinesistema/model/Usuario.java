@@ -19,23 +19,11 @@ public class Usuario {
     
     // --- Constructor ---
     public Usuario(String usuario, String nombre, String apellidoPaterno, String apellidoMaterno, String contrasenia){
-        if(usuario == null || usuario.isBlank()){
-            throw new UsuarioInvalidoException("El usuario está vacío.");
-        }
-        if(nombre == null || nombre.isBlank()){
-            throw new UsuarioInvalidoException("El nombre está vacío.");
-        }
-        if(apellidoPaterno == null || apellidoPaterno.isBlank()){
-            throw new UsuarioInvalidoException("El apellido paterno está vacío.");
-        }
-        if(contrasenia == null || contrasenia.isBlank()){
-            throw new UsuarioInvalidoException("La contraseña está vacía.");
-        }
-        this.usuario = usuario; 
-        this.nombre = nombre;
-        this.apellidoPaterno = apellidoPaterno;
+        this.usuario = validarCampo(usuario, "usuario"); 
+        this.nombre = validarCampo(nombre, "nombre");
+        this.apellidoPaterno = validarCampo(apellidoPaterno, "apellido paterno");
         this.apellidoMaterno = apellidoMaterno;
-        this.contrasenia = contrasenia;
+        this.contrasenia = validarCampo(contrasenia, "contraseña");
         permiso = false;
     }
     
@@ -67,17 +55,11 @@ public class Usuario {
     
     // --- Setters
     public void setNombre(String nombre) {
-        if(nombre == null || nombre.isBlank()){
-            throw new UsuarioInvalidoException("El nombre está vacío.");
-        }
-        this.nombre = nombre;
+        this.nombre = validarCampo(nombre, "nombre");
     }
 
     public void setApellidoPaterno(String apellidoPaterno) {
-        if(apellidoPaterno == null || apellidoPaterno.isBlank()){
-            throw new UsuarioInvalidoException("El apellido paterno está vacío.");
-        }
-        this.apellidoPaterno = apellidoPaterno;
+        this.apellidoPaterno = validarCampo(apellidoPaterno, "apellido paterno");
     }
 
     public void setApellidoMaterno(String apellidoMaterno) {
@@ -85,10 +67,7 @@ public class Usuario {
     }
 
     public void setContrasenia(String contrasenia) {
-        if(contrasenia == null || contrasenia.isBlank()){
-            throw new UsuarioInvalidoException("La contraseña está vacía.");
-        }
-        this.contrasenia = contrasenia;
+        this.contrasenia = validarCampo(contrasenia, "contraseña");
     }
 
     public void setPermiso(boolean tipoUsuario) {
@@ -96,10 +75,14 @@ public class Usuario {
     }   
 
     public void setUsuario(String usuario) {
-        if(usuario == null || usuario.isBlank()){
-            throw new UsuarioInvalidoException("El usuario está vacío.");
+        this.usuario = validarCampo(usuario, "usuario");
+    }
+    
+    private static String validarCampo(String valor, String campo){
+        if(valor == null || valor.isBlank()){
+            throw new UsuarioInvalidoException("El campo " + campo + " no puede estar vacío.");
         }
-        this.usuario = usuario;
+        return valor;
     }
     
 }
