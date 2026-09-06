@@ -42,7 +42,7 @@ import javafx.scene.control.cell.ComboBoxTableCell;
  * @author Mike
  */
 public class ConsultaOrdenCompraController implements Initializable {
-    
+
     @FXML
     private AnchorPane apContenedorCentro;
 
@@ -81,10 +81,10 @@ public class ConsultaOrdenCompraController implements Initializable {
 
     @FXML
     private TableView<ODC> tlvLista;
-    
+
     private ObservableList<ODC> listaOriginal = FXCollections.observableArrayList();
     private FilteredList<ODC> listaFiltrada;
-   
+
     @FXML
     private void handleVerDetalles(ActionEvent event) {
         ODC seleccion = tlvLista.getSelectionModel().getSelectedItem();
@@ -98,7 +98,16 @@ public class ConsultaOrdenCompraController implements Initializable {
         Map<String, Integer> conteoInsumosTotal = new HashMap<>();
 
         // Usamos el método que ya programaste en ODC para no repetir lógica
-        List<Insumo> totales = seleccion.obtenerTotalesPorId();
+        List<Insumo> totales;
+        try {
+            totales = seleccion.obtenerTotalesPorId();
+        } catch (ArithmeticException e) {
+            Alert alerta = new Alert(Alert.AlertType.ERROR);
+            alerta.setHeaderText("Cantidad fuera de rango");
+            alerta.setContentText("El total de insumos excede el límite admitido.");
+            alerta.showAndWait();
+            return;
+        }
 
         detalle.append("--- RESUMEN DE INSUMOS TOTALES ---\n");
         for (Insumo i : totales) {
@@ -116,12 +125,12 @@ public class ConsultaOrdenCompraController implements Initializable {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Detalles de Orden: " + seleccion.getIdODC());
         // Acceso correcto al objeto Usuario responsable
-        alert.setHeaderText("Responsable: " + seleccion.getResponsable().getNombre() + 
+        alert.setHeaderText("Responsable: " + seleccion.getResponsable().getNombre() +
                            " (" + seleccion.getResponsable().getUsuario() + ")");
         alert.setContentText(detalle.toString());
         alert.showAndWait();
     }
-    
+
     @FXML
     private void handleBuscar(ActionEvent event) {
         String idBusqueda = tfIdOrden.getText().trim().toLowerCase();
@@ -141,19 +150,19 @@ public class ConsultaOrdenCompraController implements Initializable {
 
         listaFiltrada.setPredicate(orden -> {
             // Filtro por ID y Estado
-            boolean matchId = idBusqueda.isEmpty() || 
+            boolean matchId = idBusqueda.isEmpty() ||
                              orden.getIdODC().toLowerCase().contains(idBusqueda);
-            boolean matchEstado = estadoBusqueda.isEmpty() || 
+            boolean matchEstado = estadoBusqueda.isEmpty() ||
                                  orden.getEstado().equalsIgnoreCase(estadoBusqueda);
 
             // 2. Filtro por Fecha con NORMALIZACIÓN
             boolean matchFecha = true;
             if (fechaSeleccionada != null) {
-                /* Si tu ODC guarda la fecha como "2026-04-25", 
+                /* Si tu ODC guarda la fecha como "2026-04-25",
                    fechaSeleccionada.toString() devolverá exactamente "2026-04-25".
                    Usamos .trim() para evitar errores por espacios invisibles.
                 */
-                String fechaAComparar = fechaSeleccionada.toString(); 
+                String fechaAComparar = fechaSeleccionada.toString();
                 matchFecha = orden.getFechaODC().contains(fechaSeleccionada.toString());
             }
 
@@ -163,7 +172,7 @@ public class ConsultaOrdenCompraController implements Initializable {
         // 3. Forzar actualización de la tabla (opcional pero recomendado)
         tlvLista.refresh();
     }
-    
+
     @FXML
     private void handleLimpiar(ActionEvent event) {
         // 1. Limpiar componentes de entrada
@@ -178,7 +187,7 @@ public class ConsultaOrdenCompraController implements Initializable {
         // Opcional: Solicitar el foco en el primer campo de búsqueda
         tfIdOrden.requestFocus();
     }
-    
+
     private void actualizarFiltro() {
         String idBusqueda = tfIdOrden.getText().trim().toLowerCase();
         String estadoBusqueda = (cbEstado.getValue() != null) ? cbEstado.getValue() : "";
@@ -190,23 +199,23 @@ public class ConsultaOrdenCompraController implements Initializable {
 
         listaFiltrada.setPredicate(orden -> {
             // 1. Lógica de ID
-            boolean matchId = idBusqueda.isEmpty() || 
+            boolean matchId = idBusqueda.isEmpty() ||
                              orden.getIdODC().toLowerCase().contains(idBusqueda);
 
             // 2. Lógica de Estado
-            boolean matchEstado = estadoBusqueda.isEmpty() || 
+            boolean matchEstado = estadoBusqueda.isEmpty() ||
                                  orden.getEstado().equalsIgnoreCase(estadoBusqueda);
 
             // 3. Lógica de Fecha (EL PUNTO CRÍTICO)
             boolean matchFecha = true;
-            
+
             // Si el usuario seleccionó una fecha en el calendario
             if (fechaCalendario != null) {
-                /* IMPORTANTE: Comparamos el String almacenado en la ODC 
+                /* IMPORTANTE: Comparamos el String almacenado en la ODC
                    con el String generado por el DatePicker (ISO_LOCAL_DATE: yyyy-MM-dd).
                 */
                 matchFecha = orden.getFechaODC().equals(fechaCalendario.toString());
-            } 
+            }
             // Si no hay fecha en el calendario pero hay texto manual (ej. el usuario borró o escribió)
             else if (!textoFechaManual.isEmpty()) {
                 matchFecha = orden.getFechaODC().contains(textoFechaManual);
@@ -215,27 +224,27 @@ public class ConsultaOrdenCompraController implements Initializable {
             return matchId && matchEstado && matchFecha;
         });
     }
-    
+
     private void configurarColumnas() {
         // Configuración de celdas existente
         tlcIdOrden.setCellValueFactory(new PropertyValueFactory<>("idODC"));
         tlcEmision.setCellValueFactory(new PropertyValueFactory<>("fechaODC"));
         tlcEstatus.setCellValueFactory(new PropertyValueFactory<>("estado"));
-        
+
         //columna editablo
         tlcEstatus.setCellFactory(
             ComboBoxTableCell.forTableColumn("Emitida", "Pendiente")
         );
-        
+
         tlcEstatus.setEditable(true);
-        
+
         //guarda cambios
         tlcEstatus.setOnEditCommit(event -> {
             ODC orden = event.getRowValue();
             orden.setEstado(event.getNewValue());
-            
+
             ArchivoOdcBase.actualizarODC(orden);
-           
+
             tlvLista.refresh(); //actualiza visualmente
         });
 
@@ -251,18 +260,18 @@ public class ConsultaOrdenCompraController implements Initializable {
             return new javafx.beans.property.SimpleStringProperty(resp != null ? resp.getUsuario() : "N/A");
         });
     }
-    
+
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // 1. Cargar datos desde la base
         listaOriginal.addAll(ArchivoOdcBase.getOdcBase());
-        
+
         //filtro
         listaFiltrada = new FilteredList<>(listaOriginal, p -> true);
-        
+
         // 3. Asignar a la tabla
         tlvLista.setItems(listaFiltrada);
-        
+
         // 4. Configurar columnas (Responsable, etc.)
         tlvLista.setEditable(true);
         configurarColumnas();

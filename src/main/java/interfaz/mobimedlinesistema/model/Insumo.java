@@ -1,67 +1,64 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package interfaz.mobimedlinesistema.model;
 
+/** Insumo y cantidad requerida por unidad de producto. */
 public class Insumo {
-    // --- Atributos --- 
     private static int contadorSiguiente = 1;
-    
-    private String idInsumo;
+
+    private final String idInsumo;
     private String nombre;
     private int cantidad;
-    
-    // --- Constructor ---
-    public Insumo(String nombre, int cantidadPorUnidad){
-        this.idInsumo = String.format("%05d", contadorSiguiente++);
-        this.nombre = nombre;
-        this.cantidad = cantidadPorUnidad;
+
+    public Insumo(String nombre, int cantidadPorUnidad) {
+        this(String.format("%05d", contadorSiguiente++), nombre, cantidadPorUnidad);
     }
-    
-    // **Reservado para la copia**
-    public Insumo(String id, String nombre, int cantidadPorUnidad){
-        this.idInsumo = id;
-        this.nombre = nombre;
-        this.cantidad = cantidadPorUnidad;
+
+    /** Conserva la identidad al copiar un insumo para una orden. */
+    public Insumo(String id, String nombre, int cantidadPorUnidad) {
+        this.idInsumo = validarTexto(id, "El identificador");
+        setNombre(nombre);
+        setCantidadPorUnidad(cantidadPorUnidad);
     }
-    
-    public String getIdInsumo(){
+
+    public String getIdInsumo() {
         return idInsumo;
     }
-    
-    public String getNombre(){
+
+    public String getNombre() {
         return nombre;
     }
 
-    public int getCantidadPorUnidad(){
+    public int getCantidadPorUnidad() {
         return cantidad;
     }
-    
-    // AGREGADO PARA JAVAFX
-    public int getCantidad(){
-        return cantidad;
+
+    public int getCantidad() {
+        return getCantidadPorUnidad();
     }
-    
-    public void setIdInsumo(String id){
-        idInsumo = id;
+
+    public void setNombre(String nombre) {
+        this.nombre = validarTexto(nombre, "El nombre del insumo");
     }
-    
-    public void setNombre(String nombre){
-        this.nombre = nombre;
-    }
-    
-    public void setCantidadPorUnidad(int cantidadPorUnidad){
+
+    public void setCantidadPorUnidad(int cantidadPorUnidad) {
+        if (cantidadPorUnidad <= 0) {
+            throw new IllegalArgumentException("La cantidad del insumo debe ser mayor que cero.");
+        }
         this.cantidad = cantidadPorUnidad;
     }
-    
-    // AGREGADO PARA JAVAFX
-    public void setCantidad(int cantidad){
-        this.cantidad = cantidad;
+
+    public void setCantidad(int cantidad) {
+        setCantidadPorUnidad(cantidad);
     }
-    
+
+    private static String validarTexto(String valor, String campo) {
+        if (valor == null || valor.isBlank()) {
+            throw new IllegalArgumentException(campo + " no puede estar vacío.");
+        }
+        return valor.strip();
+    }
+
     @Override
-    public String toString(){
+    public String toString() {
         return nombre + " - " + cantidad + " unidades";
     }
 }

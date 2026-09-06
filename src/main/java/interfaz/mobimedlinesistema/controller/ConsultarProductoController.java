@@ -3,6 +3,7 @@ package interfaz.mobimedlinesistema.controller;
 import interfaz.mobimedlinesistema.model.CatalogoProductosBase;
 import interfaz.mobimedlinesistema.model.Insumo;
 import interfaz.mobimedlinesistema.model.Producto;
+import interfaz.mobimedlinesistema.exception.ProductoInvalidoException;
 import java.net.URL;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -16,7 +17,7 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 
-// se modifica esta clase 
+// se modifica esta clase
 
 public class ConsultarProductoController implements Initializable {
 
@@ -81,19 +82,23 @@ public class ConsultarProductoController implements Initializable {
         );
 
         colDescripcion.setOnEditCommit(event -> {
-
             Producto producto = event.getRowValue();
 
-            producto.setDescripcion(
-                    event.getNewValue()
-            );
+            try {
+                CatalogoProductosBase.actualizarDescripcion(producto, event.getNewValue());
 
-            tvProductos.refresh();
-
-            mostrarAlerta(
-                    "Descripción del producto actualizada."
-            );
+                mostrarAlerta("Descripción del producto actualizada.");
+            } catch (ProductoInvalidoException e) {
+                Alert alerta = new Alert(Alert.AlertType.ERROR);
+                alerta.setTitle("Descripción inválida");
+                alerta.setHeaderText(null);
+                alerta.setContentText(e.getMessage());
+                alerta.showAndWait();
+            } finally {
+                tvProductos.refresh();
+            }
         });
+
 
         // EDITAR NOMBRE INSUMO
         colNombre.setCellFactory(
@@ -101,22 +106,22 @@ public class ConsultarProductoController implements Initializable {
         );
 
         colNombre.setOnEditCommit(event -> {
-
-            Insumo insumo = event.getRowValue();
-
-            insumo.setNombre(
-                    event.getNewValue()
-            );
-
-            tvInsumos.refresh();
-
-            mostrarAlerta(
-                    "Nombre del insumo actualizado."
-            );
+            try {
+                event.getRowValue().setNombre(event.getNewValue());
+                mostrarAlerta("Nombre del insumo actualizado.");
+            } catch (IllegalArgumentException e) {
+                Alert alerta = new Alert(Alert.AlertType.ERROR);
+                alerta.setTitle("Insumo inválido");
+                alerta.setHeaderText(null);
+                alerta.setContentText(e.getMessage());
+                alerta.showAndWait();
+            } finally {
+                tvInsumos.refresh();
+            }
         });
 
         // EXCEPCIÓN PARA VALIDAR CANTIDADES NEGATIVAS O CERO
-        
+
         // DOBLE CLICK PARA EDITAR CANTIDAD
         tvInsumos.setOnMouseClicked(event -> {
 

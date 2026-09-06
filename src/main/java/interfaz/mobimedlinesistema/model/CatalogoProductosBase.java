@@ -25,7 +25,7 @@ public class CatalogoProductosBase {
         VitrinaFuturo.agregarInsumo(new Insumo("Pija punta de broca de 1/4 de pulgada", 6));
         // Se crea con la plantilla
         productosBase.add(VitrinaFuturo);
-        
+
 
         // --- Producto Base: Mesa de Exploracion Premium ---
         Producto MesaExpPremium = new Producto("Mesa de exploración premium");
@@ -38,16 +38,16 @@ public class CatalogoProductosBase {
         MesaExpPremium.agregarInsumo(new Insumo("Tornillo", 4));
         MesaExpPremium.agregarInsumo(new Insumo("Tuerca", 4));
         productosBase.add(MesaExpPremium);
-        
-        
+
+
         // --- Producto Base: Escalerilla ---
         Producto Escalerilla = new Producto("Escalerilla");
         Escalerilla.agregarInsumo(new Insumo("Barril de plástico", 4));
         Escalerilla.agregarInsumo(new Insumo("Pija punta de broca de 1/4 de pulgada", 8));
         // Se crea con la plantilla
         productosBase.add(Escalerilla);
-        
-        
+
+
          // --- Producto Base: Silla Toma de Muestra ---
         Producto SillaTomadeMuestra = new Producto("Silla toma de muestra");
         SillaTomadeMuestra.agregarInsumo(new Insumo("Tapiz para Silla toma de muestra", 1));
@@ -56,8 +56,8 @@ public class CatalogoProductosBase {
         SillaTomadeMuestra.agregarInsumo(new Insumo("Tapón cuadrado de plástico de 1 1/4 de pulgada", 4));
         // Se crea con la plantilla
         productosBase.add(SillaTomadeMuestra);
-        
-        
+
+
          // --- Producto Base: Gabinete Hamilton ---
         Producto GabineteHamilton = new Producto("Gabinete hamilton");
         GabineteHamilton.agregarInsumo(new Insumo("Vidrio de 30x45 cm", 1));
@@ -71,7 +71,7 @@ public class CatalogoProductosBase {
     public static List<Producto> getProductosBase() {
         return productosBase;
     }
-    
+
     public static Producto buscarPorSku(String skuBuscado){ //función para buscar un producto por sku
         for(Producto p:productosBase){
             if(p.getSku().equalsIgnoreCase(skuBuscado)){
@@ -81,10 +81,32 @@ public class CatalogoProductosBase {
         }
         return null;
     }
-    
+
     //falta aplicar funsion de busqueda y aplicar a todos los nombres en mayuscula para eviatar problemas.
 
     public static void setProductosBase(Producto producto ) {
+        if (producto == null) {
+            throw new interfaz.mobimedlinesistema.exception.ProductoInvalidoException("El producto no puede ser nulo.");
+        }
+        validarDescripcionUnica(null, producto.getDescripcion());
+        if (buscarPorSku(producto.getSku()) != null) {
+            throw new interfaz.mobimedlinesistema.exception.ProductoInvalidoException("El SKU ya existe.");
+        }
         CatalogoProductosBase.productosBase.add(producto);
+    }
+    public static void actualizarDescripcion(Producto producto, String descripcion) {
+        String normalizada = Producto.validarDescripcion(descripcion);
+        validarDescripcionUnica(producto, normalizada);
+        producto.setDescripcion(normalizada);
+    }
+
+    private static void validarDescripcionUnica(Producto actual, String descripcion) {
+        String normalizada = Producto.validarDescripcion(descripcion);
+        boolean duplicado = productosBase.stream().anyMatch(p -> p != actual
+                && p.getDescripcion().equalsIgnoreCase(normalizada));
+        if (duplicado) {
+            throw new interfaz.mobimedlinesistema.exception.ProductoInvalidoException(
+                    "Ya existe un producto con esa descripción.");
+        }
     }
 }
