@@ -23,13 +23,13 @@ public class AgendaUsuariosBase {
     // Bloque estático para inicializar los Usuario base una sola vez
     static {
         // --- Usuario Base: Gerente ---
-        Usuario usuario1 = new Usuario("DOSJ01", "Jhon", "Dhoe", "Smith", "10sey0u");
+        Usuario usuario1 = new Usuario("1", "Jhon", "Dhoe", "Smith", "1");
         usuario1.setPermiso(true); // Damos permiso de administrador
         // Se crea con la plantilla
         usuariosBase.add(usuario1);
         
         // --- Usuario Base: usuario ---
-        Usuario usuario2 = new Usuario("OIPM01", "Miguel Angel", "Pérez", "Smith", "c0mew1th");
+        Usuario usuario2 = new Usuario("2", "Miguel Angel", "Pérez", "Smith", "2");
         // Se crea con la plantilla
         usuariosBase.add(usuario2);
         

@@ -101,6 +101,13 @@ public class Producto {
         this.descripcion = descripcion;
     }
 
+    /**
+     * 
+     * @param descripcion
+     * @return descripcion.strip()
+     * Valida si la descripción está vacía y elimina los espacios en blanco al 
+     * principio y al final de la descripción.
+     */
     static String validarDescripcion(String descripcion) {
         if (descripcion == null || descripcion.isBlank()) {
             throw new ProductoInvalidoException("La descripción del producto está vacía.");

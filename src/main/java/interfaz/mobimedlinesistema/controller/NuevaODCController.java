@@ -2,7 +2,7 @@ package interfaz.mobimedlinesistema.controller;
 
 import interfaz.mobimedlinesistema.model.ArchivoOdcBase;
 import interfaz.mobimedlinesistema.model.CatalogoProductosBase;
-import interfaz.mobimedlinesistema.model.ODC;
+import interfaz.mobimedlinesistema.model.OrdenCompra;
 import interfaz.mobimedlinesistema.model.Producto;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -158,15 +158,15 @@ public class NuevaODCController implements Initializable {
             return;
         }
 
-        ODC nuevaODC = new ODC(IniciarSesionController.usuarioActual, java.time.LocalDate.now().toString(),"Pendiente");
+        OrdenCompra nuevaODC = new OrdenCompra(IniciarSesionController.usuarioActual, java.time.LocalDate.now().toString(),"Pendiente");
         for (Producto producto : listaProductos) {
             nuevaODC.actualizarOAgregarProducto(producto,producto.getCantidad()
             );
         }
         ArchivoOdcBase.agregarODC(nuevaODC);
         DashboardController.lista.add(new DashboardController.Orden(nuevaODC.getIdODC(),
-                        nuevaODC.getFechaODC(),
-                        nuevaODC.getResponsable().getUsuario(),
+                        nuevaODC.getFechaOrdenCompra(),
+                        nuevaODC.getResponsable().getNombreDeUsuario(),
                         nuevaODC.getEstado()
                 )
         );

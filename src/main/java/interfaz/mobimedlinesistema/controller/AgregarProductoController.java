@@ -8,7 +8,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 
-import interfaz.mobimedlinesistema.model.Producto;
+
 import interfaz.mobimedlinesistema.model.Producto;
 
 public class AgregarProductoController {//clase para agregar porductos

@@ -6,7 +6,7 @@ package interfaz.mobimedlinesistema.controller;
 
 import interfaz.mobimedlinesistema.model.ArchivoOdcBase;
 import interfaz.mobimedlinesistema.model.Insumo;
-import interfaz.mobimedlinesistema.model.ODC;
+import interfaz.mobimedlinesistema.model.OrdenCompra;
 import interfaz.mobimedlinesistema.model.Producto;
 import interfaz.mobimedlinesistema.model.Usuario;
 import java.net.URL;
@@ -68,26 +68,26 @@ public class ConsultaOrdenCompraController implements Initializable {
     private TextField tfIdOrden;
 
     @FXML
-    private TableColumn<ODC, String> tlcEmision;
+    private TableColumn<OrdenCompra, String> tlcEmision;
 
     @FXML
-    private TableColumn<ODC, String> tlcEstatus;
+    private TableColumn<OrdenCompra, String> tlcEstatus;
 
     @FXML
-    private TableColumn<ODC, String> tlcIdOrden;
+    private TableColumn<OrdenCompra, String> tlcIdOrden;
 
     @FXML
-    private TableColumn<ODC, String> tlcResponsable;
+    private TableColumn<OrdenCompra, String> tlcResponsable;
 
     @FXML
-    private TableView<ODC> tlvLista;
+    private TableView<OrdenCompra> tlvLista;
 
-    private ObservableList<ODC> listaOriginal = FXCollections.observableArrayList();
-    private FilteredList<ODC> listaFiltrada;
+    private ObservableList<OrdenCompra> listaOriginal = FXCollections.observableArrayList();
+    private FilteredList<OrdenCompra> listaFiltrada;
 
     @FXML
     private void handleVerDetalles(ActionEvent event) {
-        ODC seleccion = tlvLista.getSelectionModel().getSelectedItem();
+        OrdenCompra seleccion = tlvLista.getSelectionModel().getSelectedItem();
 
         if (seleccion == null) {
             // ... alerta de selección vacía ...
@@ -97,7 +97,7 @@ public class ConsultaOrdenCompraController implements Initializable {
         StringBuilder detalle = new StringBuilder();
         Map<String, Integer> conteoInsumosTotal = new HashMap<>();
 
-        // Usamos el método que ya programaste en ODC para no repetir lógica
+        // Usamos el método que ya programaste en OrdenCompra para no repetir lógica
         List<Insumo> totales;
         try {
             totales = seleccion.obtenerTotalesPorId();
@@ -126,7 +126,7 @@ public class ConsultaOrdenCompraController implements Initializable {
         alert.setTitle("Detalles de Orden: " + seleccion.getIdODC());
         // Acceso correcto al objeto Usuario responsable
         alert.setHeaderText("Responsable: " + seleccion.getResponsable().getNombre() +
-                           " (" + seleccion.getResponsable().getUsuario() + ")");
+                           " (" + seleccion.getResponsable().getNombreDeUsuario() + ")");
         alert.setContentText(detalle.toString());
         alert.showAndWait();
     }
@@ -158,12 +158,12 @@ public class ConsultaOrdenCompraController implements Initializable {
             // 2. Filtro por Fecha con NORMALIZACIÓN
             boolean matchFecha = true;
             if (fechaSeleccionada != null) {
-                /* Si tu ODC guarda la fecha como "2026-04-25",
+                /* Si tu OrdenCompra guarda la fecha como "2026-04-25",
                    fechaSeleccionada.toString() devolverá exactamente "2026-04-25".
                    Usamos .trim() para evitar errores por espacios invisibles.
                 */
                 String fechaAComparar = fechaSeleccionada.toString();
-                matchFecha = orden.getFechaODC().contains(fechaSeleccionada.toString());
+                matchFecha = orden.getFechaOrdenCompra().contains(fechaSeleccionada.toString());
             }
 
             return matchId && matchEstado && matchFecha;
@@ -211,14 +211,14 @@ public class ConsultaOrdenCompraController implements Initializable {
 
             // Si el usuario seleccionó una fecha en el calendario
             if (fechaCalendario != null) {
-                /* IMPORTANTE: Comparamos el String almacenado en la ODC
+                /* IMPORTANTE: Comparamos el String almacenado en la OrdenCompra
                    con el String generado por el DatePicker (ISO_LOCAL_DATE: yyyy-MM-dd).
                 */
-                matchFecha = orden.getFechaODC().equals(fechaCalendario.toString());
+                matchFecha = orden.getFechaOrdenCompra().equals(fechaCalendario.toString());
             }
             // Si no hay fecha en el calendario pero hay texto manual (ej. el usuario borró o escribió)
             else if (!textoFechaManual.isEmpty()) {
-                matchFecha = orden.getFechaODC().contains(textoFechaManual);
+                matchFecha = orden.getFechaOrdenCompra().contains(textoFechaManual);
             }
 
             return matchId && matchEstado && matchFecha;
@@ -240,7 +240,7 @@ public class ConsultaOrdenCompraController implements Initializable {
 
         //guarda cambios
         tlcEstatus.setOnEditCommit(event -> {
-            ODC orden = event.getRowValue();
+            OrdenCompra orden = event.getRowValue();
             orden.setEstado(event.getNewValue());
 
             ArchivoOdcBase.actualizarODC(orden);
@@ -257,7 +257,7 @@ public class ConsultaOrdenCompraController implements Initializable {
         // Tu lógica existente para el responsable
         tlcResponsable.setCellValueFactory(cellData -> {
             Usuario resp = cellData.getValue().getResponsable();
-            return new javafx.beans.property.SimpleStringProperty(resp != null ? resp.getUsuario() : "N/A");
+            return new javafx.beans.property.SimpleStringProperty(resp != null ? resp.getNombreDeUsuario() : "N/A");
         });
     }
 
