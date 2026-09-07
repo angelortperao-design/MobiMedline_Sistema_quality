@@ -10,16 +10,17 @@ import interfaz.mobimedlinesistema.exception.UsuarioInvalidoException;
  */
 public class Usuario {
     // --- Atributos --- 
-    private String usuario;
+    private String nombreDeUsuario;
     private String nombre;
     private String apellidoPaterno;
     private String apellidoMaterno;
     private String contrasenia;
-    private boolean permiso; 
+    private boolean permiso; //true representa que es el gerente y al iniciar sesión abre el MenuGerente.
+    //false representa que es un empleado y abre MenuVentas.
     
     // --- Constructor ---
-    public Usuario(String usuario, String nombre, String apellidoPaterno, String apellidoMaterno, String contrasenia){
-        this.usuario = validarCampo(usuario, "usuario"); 
+    public Usuario(String nombreDeUsuario, String nombre, String apellidoPaterno, String apellidoMaterno, String contrasenia){
+        this.nombreDeUsuario = validarCampo(nombreDeUsuario, "nombre de usuario"); 
         this.nombre = validarCampo(nombre, "nombre");
         this.apellidoPaterno = validarCampo(apellidoPaterno, "apellido paterno");
         this.apellidoMaterno = apellidoMaterno;
@@ -48,8 +49,8 @@ public class Usuario {
         return permiso;
     }
 
-    public String getUsuario() {
-        return usuario;
+    public String getNombreDeUsuario() {
+        return nombreDeUsuario;
     }
     
     
@@ -70,12 +71,12 @@ public class Usuario {
         this.contrasenia = validarCampo(contrasenia, "contraseña");
     }
 
-    public void setPermiso(boolean tipoUsuario) {
-        this.permiso = tipoUsuario;
+    public void setPermiso(boolean permiso) {
+        this.permiso = permiso;
     }   
 
-    public void setUsuario(String usuario) {
-        this.usuario = validarCampo(usuario, "usuario");
+    public void setNombreDeUsuario(String nombreDeUsuario) {
+        this.nombreDeUsuario = validarCampo(nombreDeUsuario, "usuario");
     }
     
     private static String validarCampo(String valor, String campo){

@@ -2,10 +2,9 @@ package interfaz.mobimedlinesistema.controller;
 
 import interfaz.mobimedlinesistema.model.ArchivoOdcBase;
 import interfaz.mobimedlinesistema.model.CatalogoProductosBase;
-import interfaz.mobimedlinesistema.model.ODC;
+import interfaz.mobimedlinesistema.model.OrdenCompra;
 import interfaz.mobimedlinesistema.model.Producto;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.ResourceBundle;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -117,11 +116,15 @@ public class NuevaODCController implements Initializable {
             mostrarAlerta("Cantidad inválida","La cantidad debe ser mayor que cero.");
             return;
         }
-        
+
         for (Producto p : listaProductos) {
             if (p.getSku().equals(textoId)) {
+                if (cantidad > Integer.MAX_VALUE - p.getCantidad()) {
+                    mostrarAlerta("Cantidad inválida", "La cantidad acumulada es demasiado grande.");
+                    return;
+                }
                 if (esEmpleado()&& p.getCantidad() + cantidad > MAX_PRODUCTOS) {
-                    mostrarAlerta("Límite alcanzado","No puedes tener más de "+ MAX_PRODUCTOS+ 
+                    mostrarAlerta("Límite alcanzado","No puedes tener más de "+ MAX_PRODUCTOS+
                             " unidades de este producto.");
                     return;
                 }
@@ -139,9 +142,8 @@ public class NuevaODCController implements Initializable {
             mostrarAlerta("Límite alcanzado","No puedes agregar más de "+ MAX_PRODUCTOS+ " unidades.");
             return;
         }
-        
-        Producto productoODC = new Producto(productoCopia.getSku(),productoCopia.getDescripcion(),cantidad,
-                new ArrayList<>(productoCopia.getInsumos()));
+
+        Producto productoODC = productoCopia.copiarConCantidad(cantidad);
         listaProductos.add(productoODC);
 
         txtFieldID.clear();
@@ -156,15 +158,15 @@ public class NuevaODCController implements Initializable {
             return;
         }
 
-        ODC nuevaODC = new ODC(IniciarSesionController.usuarioActual, java.time.LocalDate.now().toString(),"Pendiente");
+        OrdenCompra nuevaODC = new OrdenCompra(IniciarSesionController.usuarioActual, java.time.LocalDate.now().toString(),"Pendiente");
         for (Producto producto : listaProductos) {
             nuevaODC.actualizarOAgregarProducto(producto,producto.getCantidad()
             );
         }
         ArchivoOdcBase.agregarODC(nuevaODC);
         DashboardController.lista.add(new DashboardController.Orden(nuevaODC.getIdODC(),
-                        nuevaODC.getFechaODC(),
-                        nuevaODC.getResponsable().getUsuario(),
+                        nuevaODC.getFechaOrdenCompra(),
+                        nuevaODC.getResponsable().getNombreDeUsuario(),
                         nuevaODC.getEstado()
                 )
         );

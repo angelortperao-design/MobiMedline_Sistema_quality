@@ -207,7 +207,7 @@ public class AgregarUsuarioController implements Initializable {
         // Recorremos la lista estática que tienes en AgendaUsuariosBase
         for (Usuario u : AgendaUsuariosBase.getUsuariosBase()) {
             // Buscamos si el ID de usuario ya está tomado (asumiendo que tienes un getter getUsuario() en la clase Usuario)
-            if (u.getUsuario().equalsIgnoreCase(usuarioAChecar)) {
+            if (u.getNombreDeUsuario().equalsIgnoreCase(usuarioAChecar)) {
                 throw new UsuarioDuplicadoException("El usuario '" + usuarioAChecar + "' ya se encuentra registrado.");
             }
         }
@@ -224,7 +224,7 @@ public class AgregarUsuarioController implements Initializable {
         int maxContador = 1;
         
         for (Usuario u : AgendaUsuariosBase.getUsuariosBase()) {
-            String idExistente = u.getUsuario(); // Ejemplo: "DOSJ01"
+            String idExistente = u.getNombreDeUsuario(); // Ejemplo: "DOSJ01"
             
             if (idExistente.length() >= 4 && idExistente.substring(0, 4).equalsIgnoreCase(inicialesCuatroLetras)) {
                 try {

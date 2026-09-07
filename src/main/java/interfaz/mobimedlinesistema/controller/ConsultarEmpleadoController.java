@@ -310,7 +310,7 @@ public class ConsultarEmpleadoController implements Initializable {
         
         colUsuario.setOnEditCommit(event -> {
             Usuario emp = event.getRowValue();
-            emp.setUsuario(event.getNewValue());
+            emp.setNombreDeUsuario(event.getNewValue());
             tblEmpleados.refresh();
         });
         

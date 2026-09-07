@@ -15,52 +15,55 @@ import java.util.Map;
  *
  * @author Mike
  */
-public class ODC {
-    // --- Atributos --- 
+public class OrdenCompra {
+    // --- Atributos ---
     private static int contadorSiguiente = 1;
-    
+
     private final String idODC;
     private final List<Producto> productos;
     private boolean tipoEspecial;
     private Usuario responsable;
-    private final String fechaODC;
+    private final String fechaOrdenCompra;
     private String estado;
-    
-    
+
+
     // --- Constructor ---
-    public ODC() {
-        // Genera el ID con formato #####-ODC (ej. 00001-ODC)
+    public OrdenCompra() {
+        // Genera el ID con formato #####-OrdenCompra (ej. 00001-OrdenCompra)
         this.idODC = String.format("%05d-ODC", contadorSiguiente++);
         this.productos = new ArrayList<>();
         this.tipoEspecial = false;
         this.responsable = null;
-        this.fechaODC = "";
+        this.fechaOrdenCompra = "";
         this.estado = "";
     }
-    
-    public ODC(Usuario responsable, String fecha, String estado) {
-        // Genera el ID con formato #####-ODC (ej. 00001-ODC)
+
+    public OrdenCompra(Usuario responsable, String fecha, String estado) {
+        // Genera el ID con formato #####-OrdenCompra (ej. 00001-OrdenCompra)
         this.idODC = String.format("%05d-ODC", contadorSiguiente++);
         this.productos = new ArrayList<>();
         this.tipoEspecial = false;
         this.responsable = responsable;
-        this.fechaODC = fecha;
+        this.fechaOrdenCompra = fecha;
         this.estado = estado;
     }
-    
+
     /**
      * Verifica si el producto existe en nuetra List<Producto> productos
      * 1° Caso: Existe por lo que actualiza ese producto con la nueva cantidad
      * 2° Caso: No existe por lo que creamos la instancia de Porducto con su cantidad
-     *          y usamos agregarProductoNuevo() para agregar en List<Producto> productos 
-     * @param producto Producto a agregar a la ODC
+     *          y usamos agregarProductoNuevo() para agregar en List<Producto> productos
+     * @param producto Producto a agregar a la OrdenCompra
      * @param cantidad Cantidad de ese producto
      * @autor Mike
      */
     public void actualizarOAgregarProducto(Producto producto, int cantidad) {
+        if (producto == null || cantidad <= 0) {
+            throw new IllegalArgumentException("La orden requiere un producto y una cantidad positiva.");
+        }
         boolean encontrado = false;
-        
-        // 1°caso. Existe el producto en nuestra ODC y vamos solo a actualizar
+
+        // 1°caso. Existe el producto en nuestra OrdenCompra y vamos solo a actualizar
         for (Producto p : productos) {
             if (p.getSku().equals(producto.getSku())) {
                 p.setCantidad(cantidad);
@@ -68,42 +71,43 @@ public class ODC {
                 break;
             }
         }
-        
-        // 2°caso. No existe el producto en nuestra ODC y vamos a agregar
+
+        // 2°caso. No existe el producto en nuestra OrdenCompra y vamos a agregar
         if (!encontrado) {
-            producto.setCantidad(cantidad);
-            agregarProductoNuevo(producto);
+            agregarProductoNuevo(producto.copiarConCantidad(cantidad));
         }
         recalcularTipoEspecial();
     }
-    
+
     /**
-     * Agrega una Intancia de Productov que no existe en List<Producto> productos 
-     * y toma en cuenta la REGLA DE NEGOCIO: ODC Normal/Especial
-     * @param producto Producto a agregar a la ODC
+     * Agrega una Intancia de Productov que no existe en List<Producto> productos
+y toma en cuenta la REGLA DE NEGOCIO: OrdenCompra Normal/Especial
+     * @param producto Producto a agregar a la OrdenCompra
      * @autor Mike
      */
-    public void agregarProductoNuevo(Producto producto) {
+    private void agregarProductoNuevo(Producto producto) {
         // --- REGLA DE NEGOCIO: Si un producto tiene cantidad >= 10, es Especial
         this.productos.add(producto);
         if (producto.getCantidad() >= 10) {
             setTipoEspecial(true);
         }
     }
-    
+
     /**
-     * Elimina por nombre una instancia de Producto enlistada en nuestra 
+     * Elimina por nombre una instancia de Producto enlistada en nuestra
      * List<Producto> productos
      * @param producto Elimina este producto de nuestra Lista de productos (nombre)
      * @autor Mike
      */
     public void eliminarProducto(Producto producto) {
-        this.productos.remove(producto);
+        if (producto != null) {
+            this.productos.removeIf(p -> p.getSku().equals(producto.getSku()));
+        }
         recalcularTipoEspecial();
     }
-    
+
     /**
-     * Elimina por indice una instancia de Producto enlistada en nuestra 
+     * Elimina por indice una instancia de Producto enlistada en nuestra
      * List<Producto> productos, pensado para las tablas
      * @param indice Eliminamos este producto de nuestra Lista de productos (indice)
      * @autor Mike
@@ -114,13 +118,14 @@ public class ODC {
             recalcularTipoEspecial();
         }
     }
-    
+
     /**
-     * Recorre nuestro List<Producto> productos para validar 
-     * la  REGLA DE NEGOCIO: ODC Normal/Especial
+     * Recorre nuestro List<Producto> productos para validar
+la  REGLA DE NEGOCIO: OrdenCompra Normal/Especial
      * @autor Mike
      */
     private void recalcularTipoEspecial() {
+        tipoEspecial = false;
         for (Producto p : productos) {
             if (p.getCantidad() >= 10) {
                 setTipoEspecial(true);
@@ -136,35 +141,34 @@ public class ODC {
         this.productos.clear();
         setTipoEspecial(false);
     }
-    
+
     /**
-     * Realiza un recorrido con el Foreach para extraer cantidades, 
+     * Realiza un recorrido con el Foreach para extraer cantidades,
      * comparar insumos y agruparlos
-     * @return Devuelve una ArryList<> con la suma total de los Insumos en toda la ODC
+     * @return Devuelve una ArryList<> con la suma total de los Insumos en toda la OrdenCompra
      * @autor Mike
      */
     public List<Insumo> obtenerTotalesPorId() {
         // El Map usará el ID (String o int) como llave para agrupar
         Map<String, Insumo> mapaConsolidado = new HashMap<>();
 
-        // 1. Recorremos los productos de la ODC
+        // 1. Recorremos los productos de la OrdenCompra
         for (Producto p : productos) {
             int cantODC = p.getCantidad(); // Cantidad de este producto en la orden
 
             // 2. Recorremos los insumos de cada producto
             for (Insumo i : p.getInsumos()) {
                 String idActual = i.getIdInsumo(); // Usamos el ID único
-                int totalNecesario = i.getCantidadPorUnidad() * cantODC;
+                int totalNecesario = Math.multiplyExact(i.getCantidadPorUnidad(), cantODC);
 
                 if (mapaConsolidado.containsKey(idActual)) {
                     // Si el ID ya existe, extraemos el objeto y sumamos la cantidad
                     Insumo existente = mapaConsolidado.get(idActual);
-                    existente.setCantidadPorUnidad(existente.getCantidadPorUnidad() + totalNecesario);
+                    existente.setCantidadPorUnidad(Math.addExact(existente.getCantidadPorUnidad(), totalNecesario));
                 } else {
                     // Si es la primera vez que vemos este ID, creamos una copia para la lista final
                     // Clonamos para no modificar los valores originales del catálogo
-                    Insumo copia = new Insumo(i.getNombre(), totalNecesario);
-                    copia.setIdInsumo(idActual); 
+                    Insumo copia = new Insumo(idActual, i.getNombre(), totalNecesario);
                     mapaConsolidado.put(idActual, copia);
                 }
             }
@@ -172,18 +176,18 @@ public class ODC {
         // 3. Devolvemos los valores del mapa como una lista limpia
         return new ArrayList<>(mapaConsolidado.values());
     }
-    
+
     // --- Getters
-    public String getIdODC(){ 
-        return idODC; 
+    public String getIdODC(){
+        return idODC;
     }
-    
-    public List<Producto> getProductos(){ 
-        return productos; 
+
+    public List<Producto> getProductos(){
+        return productos;
     }
-    
-    public boolean getTipoEspecial(){ 
-        return tipoEspecial; 
+
+    public boolean getTipoEspecial(){
+        return tipoEspecial;
     }
 
     public Usuario getResponsable() {
@@ -193,16 +197,16 @@ public class ODC {
     public String getEstado() {
         return estado;
     }
-    
+
     public void setEstado(String estado) {
     this.estado = estado;
     }
 
-    public String getFechaODC() {
-        return fechaODC;
+    public String getFechaOrdenCompra() {
+        return fechaOrdenCompra;
     }
-    
-    // --- Setters    
+
+    // --- Setters
     public void setTipoEspecial(boolean tipo){
         this.tipoEspecial = tipo;
     }

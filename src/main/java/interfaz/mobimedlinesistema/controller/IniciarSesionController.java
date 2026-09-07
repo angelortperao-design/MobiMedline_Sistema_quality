@@ -35,7 +35,7 @@ private void handleLogin() {
     boolean loginExitoso = false;
     
     for (Usuario u : listaUsuarios) {
-        if (u.getUsuario().equals(user) && u.getContrasenia().equals(pass)) {
+        if (u.getNombreDeUsuario().equals(user) && u.getContrasenia().equals(pass)) {
             loginExitoso = true;
             usuarioActual = u; //usuario que inició sesión
             

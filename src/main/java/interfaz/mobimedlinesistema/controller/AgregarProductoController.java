@@ -8,48 +8,48 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 
-import interfaz.mobimedlinesistema.model.Producto;
+
 import interfaz.mobimedlinesistema.model.Producto;
 
 public class AgregarProductoController {//clase para agregar porductos
 
-    @FXML 
+    @FXML
     private TextField txtCodigo;
-    @FXML 
+    @FXML
     private TextField txtNombre;
-    @FXML 
+    @FXML
     private TextField txtNombreInsumo;
-    @FXML 
+    @FXML
     private TextField txtCantidadInsumo;
-    @FXML 
+    @FXML
     private TableView<Insumo> tablaInsumos;
-    @FXML 
+    @FXML
     private TableColumn<Insumo, String> colNombreInsumo;
-    @FXML 
+    @FXML
     private TableColumn<Insumo, Integer> colCantidadInsumo;
-    @FXML 
+    @FXML
     private TableColumn<Insumo, Void> colAcciones;
-    
+
     private ObservableList<Insumo> listaInsumos = FXCollections.observableArrayList();
-    
+
 
     @FXML
     public void initialize() {
         // Configurar columnas de la tabla
         colNombreInsumo.setCellValueFactory(new PropertyValueFactory<>("nombre"));
         colCantidadInsumo.setCellValueFactory(new PropertyValueFactory<>("cantidadPorUnidad"));
-        
+
         // Configurar columna de acciones (botón eliminar)
         colAcciones.setCellFactory(param -> new TableCell<>() {
             private final Button btnEliminar = new Button("Eliminar");
-            
+
             {
                 btnEliminar.setOnAction(event -> {
                     Insumo insumo = getTableView().getItems().get(getIndex());
                     listaInsumos.remove(insumo);
                 });
             }
-            
+
             @Override
             protected void updateItem(Void item, boolean empty) {
                 super.updateItem(item, empty);
@@ -60,21 +60,21 @@ public class AgregarProductoController {//clase para agregar porductos
                 }
             }
         });
-        
+
         tablaInsumos.setItems(listaInsumos);
     }
 
     @FXML
     private void agregarInsumo() {
-        
+
         String nombreNuevo = txtNombreInsumo.getText().trim();
-        
+
         // Validar campos de insumo
         if (txtNombreInsumo.getText().trim().isEmpty()) {
             mostrarAlerta(Alert.AlertType.WARNING, "Campo vacío", "Por favor ingresa el nombre del insumo.");
             return;
         }
-        
+
         // Nueva validación de primera letra en mayúscula
         try {
         validarPrimeraMayuscula(nombreNuevo);
@@ -82,34 +82,34 @@ public class AgregarProductoController {//clase para agregar porductos
         mostrarAlerta(Alert.AlertType.ERROR, "Formato inválido", e.getMessage());
         return;
         }
-        
+
         //String nombreFormateado = capitalizar(nombreNuevo);
-        
-        //Este se hizo para que cuando se captures un insumo pase por una condcional en el cual 
+
+        //Este se hizo para que cuando se captures un insumo pase por una condcional en el cual
         //se evaluara si es existente o es nuevo
         boolean yaExiste = listaInsumos.stream()
             .anyMatch(i -> i.getNombre().equalsIgnoreCase(nombreNuevo));
-    
+
         if (yaExiste) {
-        mostrarAlerta(Alert.AlertType.WARNING, "Insumo duplicado", 
+        mostrarAlerta(Alert.AlertType.WARNING, "Insumo duplicado",
                 "Este insumo ya ha sido agregado a la lista actual.");
         return;
         }
-        
+
         int cantidad;
         try {
             cantidad = Integer.parseInt(txtCantidadInsumo.getText().trim());
             if (cantidad <= 0) throw new NumberFormatException();
         } catch (NumberFormatException e) {
-            mostrarAlerta(Alert.AlertType.ERROR, "Cantidad inválida", 
+            mostrarAlerta(Alert.AlertType.ERROR, "Cantidad inválida",
                     "La cantidad debe ser un número entero positivo.\nEjemplo: 10");
             return;
         }
-        
+
         // Crear y agregar insumo
         Insumo insumo = new Insumo(txtNombreInsumo.getText().trim(), cantidad);
         listaInsumos.add(insumo);
-        
+
         // Limpiar campos de insumo
         txtNombreInsumo.clear();
         txtCantidadInsumo.clear();
@@ -118,52 +118,57 @@ public class AgregarProductoController {//clase para agregar porductos
 
     @FXML
     private void guardarProducto() {
-        
+
         String nombreProd = txtNombre.getText().trim();
-        
+
         // Validar campos del producto
         if (txtNombre.getText().trim().isEmpty()) {
-            mostrarAlerta(Alert.AlertType.WARNING, "Campos vacíos", 
+            mostrarAlerta(Alert.AlertType.WARNING, "Campos vacíos",
                     "Por favor ingresa el nombre del producto.");
             return;
         }
-        
+
         if (listaInsumos.isEmpty()) {
-            mostrarAlerta(Alert.AlertType.WARNING, "Sin insumos", 
+            mostrarAlerta(Alert.AlertType.WARNING, "Sin insumos",
                     "Debes agregar al menos un insumo al producto.");
             return;
         }
-        
-        //Se modifico esto 
+
+        //Se modifico esto
         try {
         validarPrimeraMayuscula(nombreProd);
         } catch (IllegalArgumentException e) {
         mostrarAlerta(Alert.AlertType.ERROR, "Formato inválido", e.getMessage());
         return;
         }
-        
-        //Este se hizo para que cuando se captures un producto pase por una condcional en el cual 
+
+        //Este se hizo para que cuando se captures un producto pase por una condcional en el cual
         //se evaluara si es existente o es nuevo
         boolean productoRepetido = CatalogoProductosBase.getProductosBase().stream()
             .anyMatch(p -> p.getDescripcion().equalsIgnoreCase(nombreProd));
 
         if (productoRepetido) {
-        mostrarAlerta(Alert.AlertType.ERROR, "Producto existente", 
+        mostrarAlerta(Alert.AlertType.ERROR, "Producto existente",
                 "Ya existe un producto registrado con el nombre: " + nombreProd);
         return;
         }
-        
+
         // Crear el producto
         Producto producto = new Producto(txtNombre.getText().trim());
-        
+
         // Agregar todos los insumos
         for (Insumo insumo : listaInsumos) {
             producto.agregarInsumo(insumo);
         }
-        
+
         //Con esto se manda los recibido de agregar a producto a catalogobasdeproductos y de catalogo se muestre a el procuto nuevo
-        CatalogoProductosBase.setProductosBase(producto);//Para mostrar en catalogo se agregaa al base de catalogo de productos// Autor:Alejandro
-        
+        try {
+            CatalogoProductosBase.setProductosBase(producto);
+        } catch (interfaz.mobimedlinesistema.exception.ProductoInvalidoException e) {
+            mostrarAlerta(Alert.AlertType.ERROR, "Producto inválido", e.getMessage());
+            return;
+        }
+
         // Mostrar resumen
         StringBuilder resumen = new StringBuilder();
         resumen.append("Producto guardado exitosamente:\n\n");
@@ -171,14 +176,14 @@ public class AgregarProductoController {//clase para agregar porductos
         resumen.append("Nombre: ").append(producto.getDescripcion()).append("\n");
         //resumen.append("Total de insumos: ").append(producto.getTotalInsumos()).append("\n\n");
         resumen.append("Lista de insumos:\n");
-        
+
         for (Insumo insumo : producto.getInsumos()) {
             resumen.append("  • ").append(insumo.getNombre())
                    .append(" - ").append(insumo.getCantidadPorUnidad()).append(" unidades\n");
         }
-        
+
         mostrarAlerta(Alert.AlertType.INFORMATION, "Producto guardado", resumen.toString());
-        
+
         // Limpiar todo después de guardar
         limpiarTodo();
     }
@@ -190,23 +195,23 @@ public class AgregarProductoController {//clase para agregar porductos
         confirmacion.setTitle("Limpiar formulario");
         confirmacion.setHeaderText(null);
         confirmacion.setContentText("¿Estás seguro de que deseas limpiar todos los datos?\nLos datos ingresados se perderán.");
-        
+
         confirmacion.showAndWait().ifPresent(respuesta -> {
             if (respuesta == ButtonType.OK) {
                 limpiarTodo();
-                mostrarAlerta(Alert.AlertType.INFORMATION, "Formulario limpiado", 
+                mostrarAlerta(Alert.AlertType.INFORMATION, "Formulario limpiado",
                         "Todos los datos han sido eliminados correctamente.");
             }
         });
     }
 
     private void limpiarTodo() {
-        
+
         txtNombre.clear();
         txtNombreInsumo.clear();
         txtCantidadInsumo.clear();
         listaInsumos.clear();
-        
+
     }
 
     private void mostrarAlerta(Alert.AlertType tipo, String titulo, String mensaje) {
@@ -216,7 +221,7 @@ public class AgregarProductoController {//clase para agregar porductos
         alerta.setContentText(mensaje);
         alerta.showAndWait();
     }
-    
+
     //Este metodo sirve para que cheque o valide el nombre tiene el formato para la primera mayuscula
     private void validarPrimeraMayuscula(String texto) throws IllegalArgumentException {
     if (texto == null || texto.isEmpty()) return;
